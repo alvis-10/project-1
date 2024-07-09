@@ -8,49 +8,39 @@ const config = require('./_config');
 let index = require('./routes/index');
 let image = require('./routes/image');
 
-// Initializing the app
-const app = express();
+// Use the appropriate URI based on your environment (production, development, test)
+const mongoURI = process.env.NODE_ENV === 'production' ? config.mongoURI.production : config.mongoURI.development;
 
-// connecting the database
+// Connecting to MongoDB
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-const MONGODB_URI = process.env.MONGODB_URI || config.mongoURI[app.settings.env]
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true  },(err)=>{
-    if (err) {
-        console.log(err)
-    }else{
-        console.log(`Connected to Database: ${MONGODB_URI}`)
-    }
+// Check for MongoDB connection errors
+let db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => {
+    console.log('Connected to MongoDB');
 });
 
-// test if the database has connected successfully
-// let db = mongoose.connection;
-// db.once('open', ()=>{
-//     console.log('Database connected successfully')
-// })
+// Initialize Express app
+const app = express();
 
-
-
-
-// View Engine
+// View Engine setup (assuming you are using EJS based on your setup)
 app.set('view engine', 'ejs');
 
-// Set up the public folder;
+// Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// body parser middleware
-app.use(express.json())
+// Parse JSON bodies for API requests
+app.use(express.json());
 
-
+// Define routes
 app.use('/', index);
 app.use('/image', image);
 
-
-
- 
+// Start the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT,() =>{
+app.listen(PORT, () => {
     console.log(`Server is listening at http://localhost:${PORT}`)
 });
 
-
-module.exports = app;
+module.exports = app; // Export app for testing
