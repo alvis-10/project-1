@@ -19,9 +19,11 @@ pipeline {
         stage('Install dependencies') {
             steps {
                 script {
+                    try {
                         sh 'npm install'
+                    } catch (e) {
                         error "Failed to install dependencies: ${e.message}"
-                    
+                    }
                 }
             }
         }
@@ -29,23 +31,28 @@ pipeline {
         stage('Build project') {
             steps {
                 script {
+                    try {
                         echo 'Building project...'
                         sh 'npm run build'
+                    } catch (e) {
                         error "Build failed: ${e.message}"
                     }
                 }
             }
-    
+        }
 
         stage('Start server') {
             steps {
                 script {
+                    try {
                         echo 'Starting server...'
                         sh 'npm start &'
                         sleep 10 // Give time for the server to start
-                    } 
+                    } catch (e) {
                         error "Failed to start server: ${e.message}"
                     }
                 }
             }
-            }
+        }
+    }
+}
