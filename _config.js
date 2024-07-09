@@ -6,4 +6,7 @@ config.mongoURI = {
     development: 'mongodb+srv://<USERNAME>:<PASSWORD>@gallery.wc344.mongodb.net/darkroom-dev?retryWrites=true&w=majority',
     test: 'mongodb+srv://<USERNAME>:<PASSWORD>@gallery.wc344.mongodb.net/darkroom-test?retryWrites=true&w=majority',
 }
-module.exports = config;
+module.exports = {
+  mongoURI: 'mongodb+srv://alvis-10:RossLynch123@cluster0.mongodb.net/test?retryWrites=true&w=majority'
+};
+
